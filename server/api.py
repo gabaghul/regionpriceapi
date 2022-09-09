@@ -5,10 +5,12 @@ import logging
 from urllib.parse import unquote
 import uuid
 from flask import Flask, request, Response
+from flask_cors import CORS
 
 import domain.stay_offer.service.offer as service
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/")
 def home():

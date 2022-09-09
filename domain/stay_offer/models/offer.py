@@ -1,6 +1,8 @@
 from datetime import datetime
 import random
-from domain.driver.constant_price import prices_per_month
+import pandas as pd
+from domain.driver.price_per_month import prices_per_month
+from domain.driver.constant_price import load_constant_price
 
 class StayOffer:
     def __init__(self, start: str, end: str, latitude: str, longitude: str, airbnb_id: str):
@@ -9,7 +11,6 @@ class StayOffer:
         self.latitude = latitude
         self.longitude = longitude
         self.airbnb_id = airbnb_id
-        self.price = 0
 
     def validate(self) -> str:
         message = None
@@ -53,12 +54,16 @@ class StayOffer:
         return message
 
     def calculate_price(self):
+        self.price = self._get_fee_for_start_date() + self._get_constant_fee_for_airbnb()
+
+    def _get_fee_for_start_date(self):
         DATE_FORMAT = "%Y-%m-%d"
         start = datetime.strptime(self.start, DATE_FORMAT)
         first_date = start.replace(day=1).strftime(DATE_FORMAT)
 
         price = prices_per_month[first_date]
-        self.price = price / 1e8 +3
+        return price / 1e8 +3
+
 
     def to_dict(self) -> dict:
         return {
@@ -69,3 +74,11 @@ class StayOffer:
             'airbnb_id': self.airbnb_id,
             'price': self.price
         }
+    
+    def _get_constant_fee_for_airbnb(self):
+        constant_price = load_constant_price()
+        id = int(self.airbnb_id)
+
+        fee = constant_price[constant_price['id'] == id].iloc[0]['constant_price']
+        
+        return fee 
