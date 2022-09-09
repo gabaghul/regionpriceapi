@@ -28,13 +28,13 @@ def region_price():
         end = unquote(args.get('end'))
         latitude = unquote(args.get('latitude'))
         longitude = unquote(args.get('longitude'))
-        total_guests = unquote(args.get('totalGuests'))
+        airbnb_id = unquote(args.get('airbnbId'))
         offer, status_code, message = service.calculate_stay_offer(
             start=start,
             end=end,
             latitude=latitude,
             longitude=longitude,
-            total_guests=total_guests
+            airbnb_id=airbnb_id
         )
         if status_code == 200:
             return Response(response=json.dumps({
@@ -49,7 +49,7 @@ def region_price():
                 end: {end}, 
                 latitude: {latitude}, 
                 longitude: {longitude}, 
-                total_guests:{total_guests}
+                airbnb_id:{airbnb_id}
             ] bad request: {message}''')
             return Response(response=json.dumps({
                 'message': f'bad request: {message}'
@@ -62,7 +62,7 @@ def region_price():
                 end: {end}, 
                 latitude: {latitude}, 
                 longitude: {longitude}, 
-                total_guests:{total_guests}
+                airbnb_id:{airbnb_id}
             ] internal server error: {message}''')
             return Response(response=json.dumps({
                 'message': f'internal server error'

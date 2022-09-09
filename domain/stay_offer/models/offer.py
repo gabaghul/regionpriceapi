@@ -1,13 +1,14 @@
 from datetime import datetime
 import random
+from domain.driver.constant_price import prices_per_month
 
 class StayOffer:
-    def __init__(self, start: str, end: str, latitude: str, longitude: str, total_guests: str):
+    def __init__(self, start: str, end: str, latitude: str, longitude: str, airbnb_id: str):
         self.start = start
         self.end = end
         self.latitude = latitude
         self.longitude = longitude
-        self.total_guests = total_guests
+        self.airbnb_id = airbnb_id
         self.price = 0
 
     def validate(self) -> str:
@@ -34,13 +35,8 @@ class StayOffer:
         if self.end is None or self.end == "":
             message = "end date is required"
 
-        if self.total_guests is None or self.total_guests == "":
-            message = "total guests is required"
-
-        try:
-            int(self.total_guests)
-        except ValueError:
-            message = "total guests must be numeric"
+        if self.airbnb_id is None or self.airbnb_id == "":
+            message = "airbnb id is required"
 
         try:
             start = datetime.strptime(self.start, "%Y-%m-%d")
@@ -57,11 +53,12 @@ class StayOffer:
         return message
 
     def calculate_price(self):
-        start = datetime.strptime(self.start, "%Y-%m-%d")
-        end = datetime.strptime(self.end, "%Y-%m-%d")
-        day_price = random.uniform(20, 200)
-        date_diff_in_days = (end - start).days
-        self.price = round(day_price * date_diff_in_days * int(self.total_guests), 2)
+        DATE_FORMAT = "%Y-%m-%d"
+        start = datetime.strptime(self.start, DATE_FORMAT)
+        first_date = start.replace(day=1).strftime(DATE_FORMAT)
+
+        price = prices_per_month[first_date]
+        self.price = price / 1e8 +3
 
     def to_dict(self) -> dict:
         return {
@@ -69,6 +66,6 @@ class StayOffer:
             'end': self.end,
             'longitude': self.longitude,
             'latitude': self.latitude,
-            'total_guests': self.total_guests,
+            'airbnb_id': self.airbnb_id,
             'price': self.price
         }

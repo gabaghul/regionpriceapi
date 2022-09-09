@@ -1,8 +1,8 @@
 from typing import Tuple
 from domain.stay_offer.models.offer import StayOffer
 
-def calculate_stay_offer(start: str, end: str, latitude: str, longitude: str, total_guests: str) -> Tuple[StayOffer, int, str]:    
-    offer = StayOffer(start=start, end=end, latitude=latitude, longitude=longitude, total_guests=total_guests)
+def calculate_stay_offer(start: str, end: str, latitude: str, longitude: str, airbnb_id: str) -> Tuple[StayOffer, int, str]:    
+    offer = StayOffer(start=start, end=end, latitude=latitude, longitude=longitude, airbnb_id=airbnb_id)
     try:
         err = offer.validate()
         if err is not None:
